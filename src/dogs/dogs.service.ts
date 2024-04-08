@@ -5,12 +5,14 @@ import { UpdateDogDto } from './dto/update-dog.dto';
 
 @Injectable()
 export class DogsService {
+  private readonly dogs: CreateDogDto[] = [];
   create(createDogDto: CreateDogDto) {
-    return 'This action adds a new dog';
+    this.dogs.push(createDogDto);
+    console.log(this.dogs);
   }
 
   findAll() {
-    return `This action returns all dogs`;
+    return this.dogs;
   }
 
   findOne(id: number) {

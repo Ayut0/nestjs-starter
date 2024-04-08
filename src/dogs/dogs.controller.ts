@@ -5,19 +5,12 @@ import {
   Body,
   Param,
   Delete,
-  Query,
   Put,
 } from '@nestjs/common';
 import { DogsService } from './dogs.service';
-// import { CreateDogDto } from './dto/create-dog.dto';
-import { UpdateDogDto, ListAllEntities } from './dto/update-dog.dto';
+import { CreateDogDto } from './dto/create-dog.dto';
+import { UpdateDogDto } from './dto/update-dog.dto';
 // import type { Request } from 'express';
-
-export class CreateDogDto {
-  name: string;
-  breed: string;
-  age: number;
-}
 
 @Controller('dogs')
 export class DogsController {
@@ -35,7 +28,7 @@ export class DogsController {
 
   @Post()
   async create(@Body() createDogDto: CreateDogDto) {
-    return `This action adds a new dog ${createDogDto.name}`;
+    this.dogsService.create(createDogDto);
   }
 
   // @Get()
@@ -50,8 +43,8 @@ export class DogsController {
   }
 
   @Get()
-  findAll(@Query() query: ListAllEntities) {
-    return `This action returns all dogs (limit: ${query.limit} items)`;
+  async findAll(): Promise<CreateDogDto[]> {
+    return this.dogsService.findAll();
   }
 
   // Route parameters
