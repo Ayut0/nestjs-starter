@@ -6,10 +6,14 @@ import {
   Param,
   Delete,
   Put,
+  HttpException,
+  HttpStatus,
+  UseFilters,
 } from '@nestjs/common';
 import { DogsService } from './dogs.service';
 import { CreateDogDto } from './dto/create-dog.dto';
 import { UpdateDogDto } from './dto/update-dog.dto';
+import { HttpExceptionFilter } from 'src/exceptionFIlters/http-exception.filter';
 // import type { Request } from 'express';
 
 @Controller('dogs')
@@ -27,6 +31,7 @@ export class DogsController {
   // }
 
   @Post()
+  @UseFilters(HttpExceptionFilter)
   async create(@Body() createDogDto: CreateDogDto) {
     this.dogsService.create(createDogDto);
   }
@@ -42,11 +47,28 @@ export class DogsController {
     return this.dogsService.findOne(+id);
   }
 
-  @Get()
-  async findAll(): Promise<CreateDogDto[]> {
-    return this.dogsService.findAll();
-  }
+  // @Get()
+  // async findAll(): Promise<CreateDogDto[]> {
+  //   return this.dogsService.findAll();
+  // }
 
+  @Get()
+  async findAll() {
+    try {
+      await this.dogsService.findAll();
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          error: 'This is a custom message',
+        },
+        HttpStatus.FORBIDDEN,
+        {
+          cause: error,
+        },
+      );
+    }
+  }
   // Route parameters
   // @Get(':id')
   // findOne(@Param('id') id: string): string {
